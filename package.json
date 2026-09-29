@@ -1,6 +1,7 @@
 {
     "name": "fullstack-monorepo-starter",
     "private": true,
+    "type": "module",
     "packageManager": "pnpm@12.6.0",
     "scripts": {
         "dev": "turbo dev",
@@ -10,6 +11,8 @@
         "test": "turbo test"
     },
     "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "eslint": "^10.11.0",
         "turbo": "^2.11.5",
         "typescript": "^7.0.2"
     }
