@@ -1,10 +1,24 @@
+# Dependencies
 node_modules/
 
+# Environment
+.env
+.env.*
+!.env.example
+
+# Build output
 dist/
+build/
+
+# Turbo
 .turbo/
 
+# Coverage
 coverage/
 
+# Logs
 *.log
 
-.env
+# OS
+.DS_Store
+Thumbs.db
