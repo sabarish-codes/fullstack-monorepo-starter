@@ -1,0 +1,6 @@
+{
+    "name": "fullstack-monorepo-starter",
+    "private": true,
+    "packageManager": "pnpm@12.6.0",
+    "scripts": {}
+}
