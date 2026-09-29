@@ -2,5 +2,14 @@
     "name": "fullstack-monorepo-starter",
     "private": true,
     "packageManager": "pnpm@12.6.0",
-    "scripts": {}
+    "scripts": {
+        "dev": "turbo dev",
+        "build": "turbo build",
+        "lint": "turbo lint",
+        "typecheck": "turbo typecheck",
+        "test": "turbo test"
+    },
+    "devDependencies": {
+        "turbo": "^2.11.5"
+    }
 }
