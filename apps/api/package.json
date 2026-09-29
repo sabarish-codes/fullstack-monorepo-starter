@@ -1,5 +1,5 @@
 {
-    "name": "api",
-    "private":  true,
-    "scripts": {}
+  "name": "api",
+  "private": true,
+  "scripts": {}
 }
