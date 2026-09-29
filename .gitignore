@@ -1,6 +1,9 @@
 node_modules/
+
 dist/
-coverage
+.turbo/
+
+coverage/
 
 *.log
 
