@@ -1,6 +1,7 @@
 import express from 'express';
 import type { Application } from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import { pinoHttp } from 'pino-http';
 import { logger } from './config/logger.js';
 import { env } from './config/env.js';
@@ -11,6 +12,8 @@ export function createApp(): Application {
   const app = express();
 
   app.use(pinoHttp({ logger }));
+
+  app.use(helmet());
 
   app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
 

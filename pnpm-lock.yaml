@@ -246,6 +246,9 @@ importers:
       express:
         specifier: ^5.2.1
         version: 5.2.1
+      helmet:
+        specifier: ^8.3.0
+        version: 8.3.0
       pg:
         specifier: ^8.23.0
         version: 8.23.0
@@ -2374,6 +2377,13 @@ packages:
       }
     engines: { node: '>= 0.4' }
 
+  helmet@8.3.0:
+    resolution:
+      {
+        integrity: sha512-Qgpiaws3Sm30Av8Eah6sjMCZZwjlBu+E68rhpCWBshY1lb09HtLwj5GviX0OyQIn+ulUS0iX0AxN5n3tLZzz1w==,
+      }
+    engines: { node: '>=18.0.0' }
+
   hookified@1.15.1:
     resolution:
       {
@@ -4339,6 +4349,8 @@ snapshots:
   hasown@2.0.4:
     dependencies:
       function-bind: 1.1.2
+
+  helmet@8.3.0: {}
 
   hookified@1.15.1: {}
 
