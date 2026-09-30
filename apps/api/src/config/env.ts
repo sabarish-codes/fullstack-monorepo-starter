@@ -10,6 +10,10 @@ const envSchema = z.object({
   DATABASE_URL: z.string().min(1),
 
   REDIS_URL: z.string().min(1),
+
+  LOG_LEVEL: z
+    .enum(['info', 'debug', 'trace', 'warn', 'error', 'fatal'])
+    .default('info'),
 });
 
 const result = envSchema.safeParse(process.env);
