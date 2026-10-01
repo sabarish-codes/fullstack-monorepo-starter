@@ -7,6 +7,9 @@ const config: Config = {
   transform: {
     '^.+\\.ts$': '@swc/jest',
   },
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+  },
   clearMocks: true,
 };
 

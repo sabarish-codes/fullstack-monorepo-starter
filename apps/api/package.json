@@ -12,8 +12,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test": "node --env-file=.env ./node_modules/jest/bin/jest.js",
+    "test:watch": "node --env-file=.env ./node_modules/jest/bin/jest.js --watch"
   },
   "devDependencies": {
     "@swc/core": "^1.16.13",
@@ -24,9 +24,11 @@
     "@types/node": "^26.6.3",
     "@types/pg": "^8.23.1",
     "@types/pino-http": "^6.1.0",
+    "@types/supertest": "^7.2.1",
     "@types/swagger-ui-express": "^4.1.8",
     "drizzle-kit": "^0.31.11",
     "jest": "^30.5.2",
+    "supertest": "^7.3.0",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   },
