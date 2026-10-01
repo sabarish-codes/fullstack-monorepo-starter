@@ -6,6 +6,7 @@ import { pinoHttp } from 'pino-http';
 import { logger } from './config/logger.js';
 import { env } from './config/env.js';
 import { rateLimiter } from './middleware/rateLimit.js';
+import { checkRouter } from './routes/check.js';
 import { notFound } from './middleware/notFound.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
@@ -21,6 +22,8 @@ export function createApp(): Application {
   app.use(express.json({ limit: '10kb' }));
 
   app.use(rateLimiter);
+
+  app.use(checkRouter);
 
   app.use(notFound);
 
