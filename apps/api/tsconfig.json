@@ -3,13 +3,13 @@
   "compilerOptions": {
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "types": ["node"],
+    "types": ["node", "jest"],
     "outDir": "dist",
     "rootDir": ".",
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true
   },
-  "include": ["src/**/*.ts", "server.ts"],
+  "include": ["src/**/*.ts", "server.ts", "tests/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
