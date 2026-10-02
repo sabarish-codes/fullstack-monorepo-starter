@@ -33,6 +33,9 @@ jobs:
       - name: Typecheck
         run: pnpm exec turbo run typecheck
 
+      - name: Prepare test environment
+        run: cp apps/api/.env.example apps/api/.env
+
       - name: Test
         run: pnpm exec turbo run test
 
