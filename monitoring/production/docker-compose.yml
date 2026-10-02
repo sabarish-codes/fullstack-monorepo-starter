@@ -1,0 +1,30 @@
+services:
+  prometheus:
+    build:
+      context: ./prometheus
+    image: starter-prometheus:3.15.0
+    container_name: production-prometheus
+    restart: unless-stopped
+    environment:
+      API_HOST: ${API_HOST}
+    volumes:
+      - prometheus_data:/prometheus
+
+  grafana:
+    image: grafana/grafana:13.2.3
+    container_name: production-grafana
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus
+
+volumes:
+  prometheus_data:
+  grafana_data:
