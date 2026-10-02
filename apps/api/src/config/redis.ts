@@ -1,26 +1,27 @@
 import { createClient } from 'redis';
 import { env } from './env.js';
+import { logger } from './logger.js';
 
 export const redis = createClient({
   url: env.REDIS_URL,
 });
 
 redis.on('error', (error) => {
-  console.error('Redis client error: ', error);
+  logger.error({ err: error }, 'Redis client error');
 });
 
 redis.on('connect', () => {
-  console.log('Redis connecting...');
+  logger.info('Redis connecting...');
 });
 
 redis.on('ready', () => {
-  console.log('Redis ready');
+  logger.info('Redis ready');
 });
 
 redis.on('reconnecting', () => {
-  console.log('Redis reconnecting');
+  logger.warn('Redis reconnecting');
 });
 
 redis.on('end', () => {
-  console.log('Redis connection closed');
+  logger.info('Redis connection closed');
 });
