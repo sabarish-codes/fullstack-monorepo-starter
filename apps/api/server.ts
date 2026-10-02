@@ -45,12 +45,20 @@ function shutdown(signal: string) {
     clearTimeout(timer);
     logger.info('HTTP server closed');
 
-    await pool.end();
-    logger.info('DB connection closed');
+    try {
+      await pool.end();
+      logger.info('DB connection closed');
+    } catch (error) {
+      logger.error({ err: error }, 'Failed to close DB connection');
+    }
 
-    if (redis.isOpen) {
-      await redis.quit();
-      logger.info('Redis connection closed');
+    try {
+      if (redis.isOpen) {
+        await redis.quit();
+        logger.info('Redis connection closed');
+      }
+    } catch (error) {
+      logger.error({ err: error }, 'Failed to close Redis connection');
     }
 
     process.exit(0);
