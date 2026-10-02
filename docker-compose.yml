@@ -20,7 +20,7 @@ services:
       - '6379:6379'
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.15.0
     container_name: starter-prometheus
     restart: unless-stopped
     ports:
@@ -30,7 +30,7 @@ services:
       - prometheus_data:/prometheus
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:13.2.3
     container_name: starter-grafana
     restart: unless-stopped
     ports:
