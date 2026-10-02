@@ -44,8 +44,15 @@ function shutdown(signal: string) {
   server.close(async () => {
     clearTimeout(timer);
     logger.info('HTTP server closed');
+
     await pool.end();
     logger.info('DB connection closed');
+
+    if (redis.isOpen) {
+      await redis.quit();
+      logger.info('Redis connection closed');
+    }
+
     process.exit(0);
   });
 }
