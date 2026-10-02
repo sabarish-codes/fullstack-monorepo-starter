@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { pool } from '../config/db.js';
 import { redis } from '../config/redis.js';
 
-export const healthRouter = Router();
+export const healthRouter: Router = Router();
 
 healthRouter.get('/health', async (_req, res) => {
   const checks = {

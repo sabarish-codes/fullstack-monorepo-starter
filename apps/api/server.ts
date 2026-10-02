@@ -4,6 +4,7 @@ import { env } from './src/config/env.js';
 import { createApp } from './src/app.js';
 import { pool } from './src/config/db.js';
 import { logger } from './src/config/logger.js';
+import { redis } from './src/config/redis.js';
 
 const app = createApp();
 
@@ -13,6 +14,10 @@ async function bootstrap() {
   // check db connection
   const dbConnect = await pool.query('SELECT 1');
   logger.info({ rowCount: dbConnect.rowCount }, 'DB connection successful');
+
+  // connect redis
+  await redis.connect();
+  logger.info('Redis connection successful');
 
   server.listen(env.PORT, () => {
     logger.info({ port: env.PORT }, 'API Server running');
