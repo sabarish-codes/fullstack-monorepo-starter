@@ -16,6 +16,8 @@ COPY apps/api apps/api
 
 RUN pnpm --filter api build
 
+RUN pnpm --filter api deploy --prod /app/deploy
+
 
 FROM node:24-alpine AS production
 
@@ -23,8 +25,6 @@ ENV NODE_ENV=production
 
 WORKDIR /app
 
-COPY --from=build /app/apps/api/dist ./dist
-COPY --from=build /app/apps/api/package.json ./
-COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/deploy ./
 
 CMD ["node", "dist/server.js"]
