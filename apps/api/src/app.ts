@@ -15,6 +15,8 @@ import { errorHandler } from './middleware/errorHandler.js';
 export function createApp(): Application {
   const app = express();
 
+  app.set('trust proxy', 1);
+
   app.use(pinoHttp({ logger }));
 
   app.use(helmet());
