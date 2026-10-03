@@ -273,11 +273,15 @@ pnpm install
 
 #### 3. Configure Environment
 
+Create the environment files from their examples:
+
 ```bash
+cp .env.example .env
 cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
 ```
 
-Update `apps/api/.env` with your local configuration.
+Update the three `.env` files with your local configuration.
 
 #### 4. Start Supporting Services
 
