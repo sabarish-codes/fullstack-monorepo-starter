@@ -89,14 +89,13 @@ A foundation you can **clone, configure, extend, and build on**:
 ## 📚 Table of Contents
 
 - [How to Read This Starter](#how-to-read-this-starter)
-- [Architecture](#architecture)
 - [Design & Technology](#design--technology)
 - [Project Structure & Development](#project-structure--development)
 - [Backend](#backend)
 - [Infrastructure](#infrastructure)
 - [Frontend](#frontend)
 - [Deployment & Operations](#deployment--operations)
-- [Project Status & Extensibility](#project-status--extensibility)
+- [Current Status & Extensibility](#current-status--extensibility)
 - [Contributing](#contributing)
 - [Support & Community](#support--community)
 - [License](#license)
@@ -124,15 +123,6 @@ Not every project needs every component included here. The foundation is meant t
 
 > **Start with the foundation. Understand the decisions. Then make it yours.**
 
-<br><br>
-
-<a id="architecture"></a>
-
-## 🏗️ Architecture
-
-Visual overview of how the frontend, backend, infrastructure, and monitoring components fit together.
-
-> Detailed architecture diagrams will be added here.
 
 <br><br>
 
@@ -318,3 +308,637 @@ http://localhost:5173
 ```
 
 If the API responds, the frontend loads, and the containers are running, the local setup is ready.
+
+<br><br>
+
+<a id="backend"></a>
+
+## ⚙️ Backend
+
+This section explains the API architecture, server lifecycle, database integration, validation, observability, and testing foundation.
+
+### Backend Architecture
+
+The backend follows a **modular architecture** with clear separation between application configuration, middleware, routes, business logic, data access, and infrastructure.
+
+It provides a structured foundation without forcing a rigid application design. New modules, services, repositories, and features can be added as the application grows.
+
+> The starter provides the foundation; the application architecture can evolve according to the project's requirements.
+
+### 🚀 Application & Server Lifecycle
+
+The backend separates **application setup** from **server startup**:
+
+```text
+server.ts
+   │
+   ├── Load & validate environment
+   ├── Initialize infrastructure
+   ├── Create HTTP server
+   └── Start listening
+            │
+            ▼
+          app.ts
+            │
+            ├── Middleware
+            ├── Routes
+            ├── 404 handler
+            └── Error handler
+```
+
+- **`app.ts`** — configures the Express application, middleware, and routes.
+- **`server.ts`** — handles environment validation, infrastructure initialization, server startup, and graceful shutdown.
+
+This separation also keeps the Express application independently testable without starting a real HTTP server.
+
+### 🛡️ Middleware & Request Pipeline
+
+Requests pass through a predictable middleware pipeline before reaching application logic:
+
+```text
+Request
+  ↓
+Security & CORS
+  ↓
+Request Logging
+  ↓
+Rate Limiting
+  ↓
+Route
+  ↓
+Input Validation
+  ↓
+Business Logic
+  ↓
+Response
+  ↓
+Error Handler
+```
+
+The middleware layer handles common concerns such as security, CORS, logging, rate limiting, and request validation before the request reaches business logic.
+
+*(See `src/middleware/` and `src/app.ts`)*
+
+### 🚨 Error Handling
+
+Errors are handled centrally so routes and services can focus on application logic.
+
+- **AppError** — represents expected application errors with status codes and messages. *(See `src/errors/AppError.ts`)*
+- **asyncHandler** — forwards rejected async operations to the central error handler. *(See `src/utils/asyncHandler.ts`)*
+- **notFound** — handles requests that do not match any registered route. *(See `src/middleware/notFound.ts`)*
+- **Error handler** — formats API errors consistently and prevents internal implementation details from being exposed. *(See `src/middleware/errorHandler.ts`)*
+
+```text
+Route / Service
+      ↓
+   AppError
+      ↓
+Central Error Handler
+      ↓
+Consistent API Response
+```
+
+### ✅ Validation & Configuration
+
+Configuration and incoming request data are validated before reaching application logic.
+
+- **Environment validation** — Zod validates required environment variables when the server starts. *(See `src/config/env.ts`)*
+- **Request validation** — request bodies, parameters, and query data are validated before processing. *(See `src/middleware/validate.ts`)*
+- **Fail-fast startup** — invalid environment configuration prevents the server from starting.
+
+### 🗄️ Database & Migrations
+
+The API uses **PostgreSQL** with **Drizzle ORM** for type-safe database access and schema management.
+
+```text
+Application
+    ↓
+Drizzle ORM
+    ↓
+PostgreSQL
+```
+
+- **Drizzle ORM** — type-safe queries and schema definitions. *(See `src/db/`)*
+- **Migrations** — version-controlled database schema changes. *(See `drizzle/`)*
+- **Drizzle Kit** — manages schema and migration operations. *(See `drizzle.config.ts`)*
+
+### ⚡ Redis
+
+Redis is included as the application's fast in-memory data store and is ready for caching, temporary state, rate limiting, and other performance-sensitive workloads.
+
+```text
+Application
+    ↓
+Redis Client
+    ↓
+Redis
+```
+
+The Redis connection is initialized during server startup and cleanly disconnected during shutdown.
+
+*(See `src/config/redis.ts`)*
+
+### 📊 Logging & Observability
+
+The backend includes structured logging and application metrics to make runtime behavior easier to inspect and debug.
+
+- **Pino** — structured JSON application logging. *(See `src/config/logger.ts`)*
+- **Pino HTTP** — request-level logging. *(See `src/app.ts`)*
+- **Redaction** — sensitive values are excluded from logs. *(See `src/config/logger.ts`)*
+- **Prometheus metrics** — exposes application metrics through `/metrics`. *(See `src/metrics/`)*
+
+```text
+Request
+  ├── Pino HTTP → Structured Logs
+  └── Prometheus → Application Metrics
+```
+
+### ❤️ Health & Readiness
+
+The API exposes a lightweight health endpoint for verifying that the service is running.
+
+```text
+GET /check
+```
+
+Useful for:
+
+- Local development checks
+- Container health checks
+- Reverse proxy or load balancer checks
+- Deployment verification
+
+The endpoint provides a simple signal that the API process is responding.
+
+*(See `src/routes/check.ts` and `src/app.ts`)*
+
+### 📖 API Documentation
+
+The API is documented using **OpenAPI/Swagger**.
+
+```text
+Express API
+     ↓
+OpenAPI Specification
+     ↓
+Swagger UI
+```
+
+Swagger provides an interactive interface to:
+
+- Explore available endpoints
+- View request and response schemas
+- Understand API parameters
+- Test endpoints during development
+
+*(See `src/docs/` and `src/app.ts`)*
+
+### 🧪 Testing
+
+The backend uses **Jest** and **Supertest** for automated API testing.
+
+- **Jest** — test runner and assertions.
+- **Supertest** — tests HTTP endpoints without requiring a running server.
+- Tests can be run through the monorepo from the repository root.
+
+```text
+Test
+  ↓
+Express App
+  ↓
+Route / Middleware / Logic
+  ↓
+Response
+  ↓
+Assertions
+```
+
+*(See `src/**/*.test.ts` and the API Jest configuration.)*
+
+<br><br>
+
+<a id="infrastructure"></a>
+
+## 🐳 Infrastructure
+
+Infrastructure provides the **local runtime environment and supporting services** required by the application.
+
+It covers containerization, local services, networking, reverse proxying, and monitoring.
+
+### 🐳 Docker
+
+Docker containerizes the backend and provides an isolated runtime environment.
+
+- **API** — runs the backend in a container.
+- **Multi-stage build** — separates build dependencies from the production runtime.
+
+*(See `apps/api/Dockerfile`)*
+
+### 🧩 Docker Compose
+
+Docker Compose runs the supporting infrastructure locally as a group of services.
+
+```text
+Docker Compose
+   ├── PostgreSQL
+   ├── Redis
+   ├── Prometheus
+   └── Grafana
+```
+
+Start the services with:
+
+```bash
+docker compose up -d
+```
+
+Stop them with:
+
+```bash
+docker compose down
+```
+
+*(See `docker-compose.yml`)*
+
+### 🌐 Container Networking
+
+Docker provides an internal network that allows containers to communicate with each other using their service names.
+
+```text
+API
+ ├── PostgreSQL
+ ├── Redis
+ └── Monitoring
+```
+
+This keeps service-to-service communication independent of host-specific addresses.
+
+*(See `docker-compose.yml`)*
+
+### 🗄️ PostgreSQL & Redis
+
+The starter runs PostgreSQL and Redis locally through Docker Compose.
+
+- **PostgreSQL** — primary relational database for the API.
+- **Redis** — in-memory data store for caching and other fast-access workloads.
+
+```text
+API
+ ├── PostgreSQL
+ └── Redis
+```
+
+*(See `docker-compose.yml` and `apps/api/src/config/`)*
+
+### 🌐 Nginx
+
+Nginx provides a local reverse-proxy layer for running the application in a production-like network setup.
+
+```text
+Client
+   ↓
+Nginx
+   ↓
+API
+```
+
+It allows the API to be accessed through a single entry point while the backend remains behind the proxy.
+
+*(See `nginx/`)*
+
+### 📊 Monitoring
+
+The starter includes Prometheus and Grafana for monitoring the API locally.
+
+```text
+API
+  │
+  │ /metrics
+  ▼
+Prometheus
+  │
+  ▼
+Grafana
+```
+
+- **Prometheus** — collects and stores application metrics.
+- **Grafana** — visualizes those metrics through dashboards.
+
+*(See `prometheus/`, `grafana/`, and `monitoring/`)*
+
+#### 🔭 Prometheus
+
+Prometheus collects metrics exposed by the API through the `/metrics` endpoint.
+
+```text
+API
+  │
+  │ /metrics
+  ▼
+Prometheus
+```
+
+*(See `prometheus/`)*
+
+#### 📈 Grafana
+
+Grafana connects to Prometheus and provides dashboards for viewing the collected metrics.
+
+```text
+Prometheus
+     ↓
+  Grafana
+     ↓
+Dashboards
+```
+
+*(See `grafana/`)*
+
+<br><br>
+
+<a id="frontend"></a>
+
+## 🎨 Frontend
+
+The frontend is a **React + Vite** application with the core libraries and providers configured as a starting point for building application-specific features.
+
+### Frontend Setup
+
+The starter includes the basic frontend foundation:
+
+- **React + Vite** — application runtime and development tooling.
+- **React Router** — client-side routing.
+- **TanStack Query** — server-state management.
+- **Axios** — API communication.
+- **React Hook Form** — form handling.
+- **Zustand** — client-side state management.
+- **shadcn/ui** — reusable UI components.
+- **Toasts** — user feedback for application actions.
+- **Sentry** — frontend error monitoring.
+- **Vitest + React Testing Library** — frontend testing.
+
+Core providers and setup are initialized in the application entry point.
+
+*(See `apps/web/src/main.tsx`)*
+
+<br><br>
+
+<a id="deployment--operations"></a>
+
+## 🚀 Deployment & Operations
+
+This section covers how the application is **validated, released, deployed, and monitored** in a production-oriented environment.
+
+The setup remains **provider-agnostic**, allowing the deployment environment to be changed without changing the core application architecture.
+
+### 🔄 CI/CD
+
+The deployment pipeline is split into **CI for validation** and **CD for releases**.
+
+```text
+       CI
+Push / Pull Request
+        ↓
+Install Dependencies
+        ↓
+      Lint
+        ↓
+    Typecheck
+        ↓
+      Test
+        ↓
+     Build
+
+
+       CD
+Version Tag (v*)
+        ↓
+   Docker Build
+        ↓
+   Push to GHCR
+        ↓
+Versioned API Image
+```
+
+### 🧪 Continuous Integration
+
+GitHub Actions validates changes on:
+
+- Pushes to `main`
+- Pull requests
+
+Checks include:
+
+- Lint
+- Typecheck
+- Tests
+- Build
+
+*(See `.github/workflows/ci.yml`)*
+
+### 🚢 Continuous Delivery
+
+Creating a version tag such as `v0.1.0` triggers the release workflow.
+
+The workflow:
+
+1. Builds the API Docker image.
+2. Tags the image with the release version.
+3. Publishes it to GitHub Container Registry.
+
+*(See `.github/workflows/`)*
+
+### 🏷️ Release Strategy
+
+Releases use version tags such as:
+
+```text
+v0.1.0
+v0.2.0
+v1.0.0
+```
+
+Versioned releases provide a clear and traceable deployment artifact.
+
+### 📦 Container Registry
+
+API images are published to **GitHub Container Registry (GHCR)**.
+
+```text
+ghcr.io/sabarish-codes/fullstack-monorepo-starter/api:v0.1.0
+```
+
+Versioned image tags keep deployments reproducible and traceable.
+
+*(See `.github/workflows/` and `apps/api/Dockerfile`)*
+
+### 🚀 Production Deployment
+
+The starter uses **independent deployments** for the frontend, backend, and monitoring systems.
+
+```text
+                    PRODUCTION APPLICATION
+
+┌──────────────────────────┐
+│   Frontend Deployment    │
+│                          │
+│   React + Vite → dist/   │
+│          ↓               │
+│    Static Host / CDN     │
+└────────────┬─────────────┘
+             │
+             │ HTTPS API requests
+             ▼
+
+┌──────────────────────────┐
+│     API Deployment       │
+│                          │
+│  Nginx → API Container   │
+│              │           │
+│       ┌──────┴──────┐    │
+│       ▼             ▼    │
+│  PostgreSQL       Redis  │
+│   (Managed)      (Managed)│
+└────────────┬─────────────┘
+             │
+             │ HTTPS /metrics
+             ▼
+
+┌──────────────────────────┐
+│ Monitoring Deployment    │
+│                          │
+│  Separate Monitoring     │
+│       Server             │
+│          │               │
+│   ┌──────┴──────┐        │
+│   ▼             ▼        │
+│Prometheus → Grafana      │
+│     │                    │
+│     └─ scrapes API       │
+│        /metrics          │
+└──────────────────────────┘
+```
+
+- **Frontend** — built as static files and deployed independently to a static host or CDN.
+- **API** — deployed independently as a Docker container behind Nginx.
+- **Database & Redis** — connected to the API as external managed services.
+- **Monitoring** — deployed separately from both the frontend and API.
+- **Prometheus** — periodically scrapes the API's `/metrics` endpoint.
+- **Grafana** — visualizes the metrics collected by Prometheus.
+
+This separation allows each part of the system to be deployed and scaled independently.
+
+The exact hosting provider is intentionally left open so the deployment can be adapted to different environments.
+
+*(See `apps/api/Dockerfile`, `nginx/`, and `monitoring/production/`)*
+
+### 🔒 Nginx & HTTPS
+
+Nginx is the public entry point for the API.
+
+```text
+Internet
+   ↓ HTTPS
+Nginx
+   ↓
+Private API Container
+```
+
+- Terminates HTTPS/TLS.
+- Forwards API traffic to the backend.
+- Keeps the API container from being directly exposed.
+
+TLS and domain configuration depend on the hosting environment.
+
+*(See `nginx/`)*
+
+### ☁️ External Services
+
+Production deployments can use managed services for infrastructure that runs outside the application containers.
+
+- **PostgreSQL** — managed database.
+- **Redis** — managed in-memory data store.
+- **Static Host / CDN** — serves the frontend.
+- **Monitoring Server** — runs Prometheus and Grafana separately.
+
+Service configuration is provided through environment variables.
+
+*(See `apps/api/src/config/env.ts`)*
+
+### ✅ Production Verification
+
+After deployment, verify the main system components:
+
+- **Frontend** — loads successfully.
+- **API** — health endpoint responds.
+- **API connectivity** — frontend can communicate with the API.
+- **Monitoring** — Prometheus receives API metrics.
+- **Grafana** — displays the collected metrics.
+
+The exact verification commands depend on the hosting environment and deployed domain.
+
+environment and deployed domain.
+
+<br><br>
+
+<a id="current-status--extensibility"></a>
+
+## 📌 Current Status & Extensibility
+
+### 🚧 Environment-Specific Setup
+
+These are intentionally not preconfigured because they depend on the actual production environment:
+
+- **Production database migrations** — require the project's real production database.
+- **HTTPS/TLS** — requires the project's real domain, certificates, and hosting environment.
+
+### 🔧 Future Extensions
+
+- Authentication & authorization
+- Application-specific modules and business logic
+- Background jobs and queues
+- Additional integrations and infrastructure
+
+<br><br>
+
+<a id="contributing"></a>
+
+## 🤝 Contributing
+
+Contributions, fixes, and improvements are welcome.
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Make your changes.
+4. Run the checks locally.
+5. Open a pull request.
+
+Please keep changes focused and follow the existing project conventions.
+
+<br><br>
+
+<a id="support--community"></a>
+
+## ⭐ Support & Community
+
+If this starter helps you build faster or learn something useful:
+
+- 🐛 **Report bugs** through GitHub Issues
+- 💡 **Suggest improvements**
+- 💬 **Share feedback**
+
+<p align="left">
+  <a href="https://github.com/sabarish-codes/fullstack-monorepo-starter">
+    <img src="https://img.shields.io/github/stars/sabarish-codes/fullstack-monorepo-starter?style=social" alt="Star on GitHub" />
+  </a>
+</p>
+
+<br><br>
+
+<a id="license"></a>
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+See the [LICENSE](./LICENSE) file for the full license text.
