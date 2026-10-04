@@ -455,22 +455,17 @@ Request
 
 ### ❤️ Health & Readiness
 
-The API exposes a lightweight health endpoint for verifying that the service is running.
+The API exposes two health endpoints:
+
+- **`GET /check`** — verifies that the API process is responding.
+- **`GET /health`** — checks API readiness, including PostgreSQL and Redis connectivity.
 
 ```text
-GET /check
+/check  → API
+/health → API + PostgreSQL + Redis
 ```
 
-Useful for:
-
-- Local development checks
-- Container health checks
-- Reverse proxy or load balancer checks
-- Deployment verification
-
-The endpoint provides a simple signal that the API process is responding.
-
-*(See `src/routes/check.ts` and `src/app.ts`)*
+*(See `src/routes/check.ts`, `src/routes/health.ts`, and `src/app.ts`)*
 
 ### 📖 API Documentation
 
