@@ -308,6 +308,43 @@ http://localhost:5173
 ```
 
 If the API responds, the frontend loads, and the containers are running, the local setup is ready.
+ 
+### Local URLs & Ports
+ 
+| Service     | URL / Port                      |
+| ----------- | ------------------------------- |
+| Frontend    | http://localhost:5173           |
+| API         | http://localhost:3000           |
+| Swagger UI  | http://localhost:3000/docs      |
+| Metrics     | http://localhost:3000/metrics   |
+| PostgreSQL  | `localhost:5432`                |
+| Redis       | `localhost:6379`                |
+| Prometheus  | http://localhost:9090           |
+| Grafana     | http://localhost:3001           |
+ 
+### Commands
+ 
+| Command            | Description                              |
+| ------------------ | ---------------------------------------- |
+| `pnpm dev`         | Run API and frontend in development      |
+| `pnpm build`       | Build all apps                           |
+| `pnpm lint`        | Run ESLint                               |
+| `pnpm typecheck`   | Run the TypeScript compiler checks       |
+| `pnpm test`        | Run all tests                            |
+| `pnpm format`      | Format code with Prettier                |
+| `pnpm db:generate` | Generate a migration from schema changes |
+| `pnpm db:migrate`  | Apply migrations                         |
+ 
+Husky runs lint and formatting checks on commit so problems are caught before CI.
+ 
+### Docker Compose
+ 
+`docker compose up -d` starts only the **supporting services**: PostgreSQL, Redis, Prometheus, and Grafana. The API and frontend run through `pnpm dev`.
+ 
+```bash
+docker compose ps      # check status
+docker compose down    # stop everything
+```
 
 <br><br>
 
