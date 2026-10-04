@@ -80,7 +80,39 @@ A foundation you can **clone, configure, extend, and build on**:
 
 ## 👀 Visual Overview
 
-> Screenshots and architecture visuals will be added here after the documentation is complete.
+<p align="center">
+  <img src=".github/assets/architecture.png" width="800" alt="Production architecture: frontend, backend server, monitoring server" />
+  <br />
+  <sub><b>Production architecture:</b> frontend, backend (Nginx + API), and monitoring deploy independently</sub>
+</p>
+<br>
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src=".github/assets/swagger.png" width="450" alt="Swagger UI showing /check and /health" />
+      <br />
+      <sub><b>Swagger UI</b><br />Interactive API docs at <code>/docs</code></sub>
+    </td>
+    <td align="center" width="50%">
+      <img src=".github/assets/grafana.png" width="450" alt="Grafana dashboard with API metrics" />
+      <br />
+      <sub><b>Grafana</b><br />API metrics dashboard</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src=".github/assets/prometheus-targets.png" width="450" alt="Prometheus targets page showing the API as UP" />
+      <br />
+      <sub><b>Prometheus targets</b><br />API scraped successfully (UP)</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src=".github/assets/prometheus-query.png" width="450" alt="Prometheus query result" />
+      <br />
+      <sub><b>Prometheus query</b><br />Live metrics from <code>/metrics</code></sub>
+    </td>
+  </tr>
+</table>
 
 ---
 
